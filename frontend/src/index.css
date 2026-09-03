@@ -193,6 +193,27 @@ body {
 }
 .history-table tr:hover td { background: var(--surface2); cursor: pointer; }
 
+.icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+.icon-btn:hover:not(:disabled) {
+  background: rgba(239, 68, 68, 0.1);
+  border-color: var(--danger);
+  color: var(--danger);
+}
+.icon-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
 /* ── Alert Banners ── */
 .alert-banner {
   padding: 1.5rem;

@@ -1,6 +1,15 @@
-import { useState, useEffect } from 'react';
+import { Fragment, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { getPatients, getPatient } from '../api';
+import { getPatients, getPatient, deletePatient } from '../api';
+
+function TrashIcon() {
+  return (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <path d="M4 7h16M10 11v6M14 11v6M6 7l1 12a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2l1-12M9 7V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"
+            stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
 
 export default function History() {
   const [patients, setPatients] = useState([]);
@@ -8,6 +17,8 @@ export default function History() {
   const [search,  setSearch]    = useState('');
   const [expanded, setExpanded] = useState(null);
   const [detail,   setDetail]   = useState(null);
+  const [deleting, setDeleting] = useState(null);
+  const [error,    setError]    = useState('');
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -19,6 +30,25 @@ export default function History() {
     setExpanded(id);
     const { data } = await getPatient(id);
     setDetail(data);
+  };
+
+  const handleDelete = async (e, p) => {
+    e.stopPropagation();
+    const ok = window.confirm(
+      `Delete ${p.name} (ID #${p.id}) and all of their visits? This cannot be undone.`
+    );
+    if (!ok) return;
+    setError('');
+    setDeleting(p.id);
+    try {
+      await deletePatient(p.id);
+      setPatients(list => list.filter(row => row.id !== p.id));
+      if (expanded === p.id) { setExpanded(null); setDetail(null); }
+    } catch (err) {
+      setError(err.response?.data?.error || 'Could not delete this patient.');
+    } finally {
+      setDeleting(null);
+    }
   };
 
   const filtered = patients.filter(p =>
@@ -43,6 +73,12 @@ export default function History() {
         />
       </div>
 
+      {error && (
+        <div className="alert-banner alert-danger" style={{ padding: '0.8rem 1rem', marginBottom: '1rem' }}>
+          {error}
+        </div>
+      )}
+
       {filtered.length === 0 ? (
         <div className="card" style={{ textAlign: 'center', color: 'var(--text-muted)', padding: '3rem' }}>
           No patients found. Run an assessment first.
@@ -58,8 +94,8 @@ export default function History() {
             </thead>
             <tbody>
               {filtered.map(p => (
-                <>
-                  <tr key={p.id} onClick={() => toggleExpand(p.id)}>
+                <Fragment key={p.id}>
+                  <tr onClick={() => toggleExpand(p.id)}>
                     <td><span style={{ color: 'var(--primary)', fontWeight: 700 }}>#{p.id}</span></td>
                     <td style={{ fontWeight: 600 }}>{p.name}</td>
                     <td>{p.age}</td>
@@ -76,16 +112,27 @@ export default function History() {
                       {p.last_visit ? new Date(p.last_visit).toLocaleDateString() : '—'}
                     </td>
                     <td>
-                      <button className="btn btn-outline" style={{ padding: '0.3rem 0.8rem', fontSize: '0.82rem' }}
-                        onClick={e => { e.stopPropagation(); navigate('/', { state: { prefill: p } }); }}>
-                        + New Visit
-                      </button>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', justifyContent: 'flex-end' }}>
+                        <button className="btn btn-outline" style={{ padding: '0.3rem 0.8rem', fontSize: '0.82rem' }}
+                          onClick={e => { e.stopPropagation(); navigate('/', { state: { prefill: p } }); }}>
+                          + New Visit
+                        </button>
+                        <button
+                          type="button"
+                          className="icon-btn"
+                          title={`Delete ${p.name}`}
+                          aria-label={`Delete ${p.name}`}
+                          disabled={deleting === p.id}
+                          onClick={e => handleDelete(e, p)}
+                        >
+                          <TrashIcon />
+                        </button>
+                      </div>
                     </td>
                   </tr>
 
-                  {/* Expanded visits */}
                   {expanded === p.id && detail && (
-                    <tr key={`${p.id}-detail`}>
+                    <tr>
                       <td colSpan={8} style={{ padding: '0', background: 'var(--bg)' }}>
                         <div style={{ padding: '1rem 1.5rem' }}>
                           <div style={{ fontWeight: 700, marginBottom: '0.8rem', color: 'var(--text-muted)', fontSize: '0.82rem', textTransform: 'uppercase' }}>
@@ -110,7 +157,7 @@ export default function History() {
                       </td>
                     </tr>
                   )}
-                </>
+                </Fragment>
               ))}
             </tbody>
           </table>

@@ -99,4 +99,21 @@ router.post('/', async (req, res, next) => {
   }
 });
 
+// DELETE /api/patients/:id — remove the patient and all visits (FK CASCADE).
+router.delete('/:id', async (req, res, next) => {
+  const id = parseId(req.params.id);
+  if (id === undefined || id === null) {
+    return res.status(400).json({ error: 'id must be a positive integer' });
+  }
+  try {
+    const [result] = await db.query('DELETE FROM patients WHERE id = ?', [id]);
+    if (!result.affectedRows) {
+      return res.status(404).json({ error: 'Patient not found' });
+    }
+    res.status(204).end();
+  } catch (err) {
+    next(err);
+  }
+});
+
 module.exports = router;

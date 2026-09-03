@@ -12,6 +12,7 @@ if (KEY) API.defaults.headers.common['x-api-key'] = KEY;
 export const getPatients   = (params) => API.get('/patients', { params });
 export const getPatient    = (id)     => API.get(`/patients/${encodeURIComponent(id)}`);
 export const createPatient = (data)   => API.post('/patients', data);
+export const deletePatient = (id)     => API.delete(`/patients/${encodeURIComponent(id)}`);
 export const runPredict    = (data)   => API.post('/predict', data);
 export const getVisit      = (id)     => API.get(`/predict/visits/${encodeURIComponent(id)}`);
 export const getHealth     = ()       => API.get('/health');

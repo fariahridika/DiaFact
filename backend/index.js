@@ -40,7 +40,7 @@ app.use(cors({
     if (originAllowed(origin)) return cb(null, true);
     return cb(new Error('Origin not allowed'));
   },
-  methods: ['GET', 'POST'],
+  methods: ['GET', 'POST', 'DELETE'],
   credentials: false,
 }));
 
