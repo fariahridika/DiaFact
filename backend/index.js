@@ -19,13 +19,21 @@ app.use(helmet());
 // The previous build used bare cors(), which reflects any origin. This service
 // holds patient records, so the allowlist is explicit.
 const ALLOWED = (process.env.ALLOWED_ORIGINS
-  || 'http://localhost:5173,http://127.0.0.1:5173')
+  || 'http://localhost:5173,http://127.0.0.1:5173,https://diafact-iota.vercel.app')
   .split(',').map(s => s.trim()).filter(Boolean);
+
+function originAllowed(origin) {
+  if (!origin || ALLOWED.includes(origin)) return true;
+  try {
+    const host = new URL(origin).hostname;
+    if (host === 'diafact-iota.vercel.app' || host.endsWith('.vercel.app')) return true;
+  } catch { /* ignore */ }
+  return false;
+}
 
 app.use(cors({
   origin(origin, cb) {
-    // Same-origin/curl requests arrive with no Origin header.
-    if (!origin || ALLOWED.includes(origin)) return cb(null, true);
+    if (originAllowed(origin)) return cb(null, true);
     return cb(new Error('Origin not allowed'));
   },
   methods: ['GET', 'POST'],
@@ -68,6 +76,8 @@ if (API_KEY) {
 
 app.use('/api/patients', require('./routes/patients'));
 app.use('/api/predict',  require('./routes/predict'));
+
+app.get('/', (_req, res) => res.json({ status: 'ok', health: '/api/health' }));
 
 app.get('/api/health', async (req, res) => {
   const out = { status: 'ok', ml: 'unreachable', db: 'unreachable' };
