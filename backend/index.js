@@ -14,7 +14,11 @@ const app = express();
 app.set('trust proxy', 1);
 
 app.disable('x-powered-by');
-app.use(helmet());
+app.use(helmet({
+  // This API is called from Vercel; Helmet's default same-origin CORP
+  // makes the browser treat a successful response as a network failure.
+  crossOriginResourcePolicy: { policy: 'cross-origin' },
+}));
 
 // The previous build used bare cors(), which reflects any origin. This service
 // holds patient records, so the allowlist is explicit.
