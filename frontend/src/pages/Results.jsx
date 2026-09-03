@@ -45,23 +45,24 @@ export default function Results() {
   const ppv = op.expected_precision != null ? Math.round(op.expected_precision * 100) : null;
 
   return (
-    <div style={{ maxWidth: 900, margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+    <div className="page page-wide results-page">
 
-      <div className="card" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '1rem' }}>
+      <div className="card results-hero">
         <div>
-          <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: '0.2rem', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
+          <div className="eyebrow">
             {is_new_patient ? '🆕 New Patient' : `Visit #${visit.visit_number}`}
           </div>
-          <h2 style={{ fontSize: '1.3rem', fontWeight: 800 }}>{patient.name}</h2>
-          <div style={{ color: 'var(--text-muted)', fontSize: '0.88rem', marginTop: '0.2rem' }}>
+          <h2 className="results-name">{patient.name}</h2>
+          <div className="results-meta">
             Patient ID: <strong style={{ color: 'var(--primary)' }}>#{patient.id}</strong>
-            &nbsp;·&nbsp;{patient.age} yrs&nbsp;·&nbsp;{patient.gender}
+            <span className="dot-sep">·</span>{patient.age} yrs
+            <span className="dot-sep">·</span>{patient.gender}
           </div>
         </div>
-        <div style={{ display: 'flex', gap: '0.7rem', flexWrap: 'wrap' }}>
+        <div className="actions-row">
           {has_previous && (
             <button className="btn btn-outline" onClick={() => setShowCompare(true)}>
-              📊 Compare with Previous Visit
+              📊 Compare visits
             </button>
           )}
           <button className="btn btn-primary" onClick={() => navigate('/')}>+ New Assessment</button>
@@ -95,9 +96,9 @@ export default function Results() {
         </div>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1.4fr', gap: '1.5rem' }}>
-        <div className="card" style={{ textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-          <div className="section-title" style={{ alignSelf: 'flex-start', width: '100%' }}>Calibrated Risk</div>
+      <div className="results-split">
+        <div className="card risk-card">
+          <div className="section-title">Calibrated Risk</div>
           <RiskGauge percent={visit.risk_percent} />
           <div style={{ marginTop: '0.6rem', color: 'var(--text-muted)', fontSize: '0.78rem' }}>
             Calibrated to observed prevalence.
@@ -112,10 +113,10 @@ export default function Results() {
 
         <div className="card">
           <div className="section-title">Clinical Inputs</div>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.4rem 1rem' }}>
+          <div className="inputs-grid">
             {Object.entries(inputs).filter(([k]) => INPUT_LABELS[k]).map(([k, v]) => (
-              <div key={k} style={{ display: 'flex', justifyContent: 'space-between', padding: '0.35rem 0', borderBottom: '1px solid var(--border)', fontSize: '0.88rem' }}>
-                <span style={{ color: 'var(--text-muted)' }}>{INPUT_LABELS[k]}</span>
+              <div key={k} className="input-row">
+                <span className="muted">{INPUT_LABELS[k]}</span>
                 <span style={{ fontWeight: 600 }}>
                   {YES_NO.includes(k) ? (Number(v) === 1 ? 'Yes' : 'No')
                     : k === 'gender' ? (Number(v) === 1 ? 'Male' : 'Female')

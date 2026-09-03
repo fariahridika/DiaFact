@@ -13,7 +13,7 @@ export default function RiskGauge({ percent }) {
 
   return (
     <div style={{ textAlign: 'center' }}>
-      <svg viewBox="0 0 180 100" width="220" style={{ overflow: 'visible' }}>
+      <svg viewBox="0 0 180 100" className="risk-gauge-svg" style={{ overflow: 'visible' }}>
         {/* Track */}
         <path
           d={`M${cx - r},${cy} A${r},${r} 0 0,1 ${cx + r},${cy}`}

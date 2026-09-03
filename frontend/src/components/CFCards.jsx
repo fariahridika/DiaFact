@@ -20,13 +20,9 @@ function DiffTarget({ feat, orig, newVal }) {
   const known = Number.isFinite(o);
 
   return (
-    <div style={{
-      display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-      padding: '0.8rem 1rem', background: 'var(--surface)',
-      border: '1px solid var(--border)', borderRadius: '8px', marginBottom: '0.5rem',
-    }}>
+    <div className="cf-target">
       <div style={{ fontWeight: 600, color: 'var(--text)' }}>Target {label}</div>
-      <div style={{ textAlign: 'right' }}>
+      <div className="cf-target-val">
         <div style={{ fontWeight: 800, fontSize: '1.1rem', color: 'var(--success)' }}>
           {newVal}{unit}
         </div>
@@ -64,7 +60,7 @@ export default function CFCards({ counterfactuals, originalInputs, riskLabel, th
   const pct = threshold != null ? `${(threshold * 100).toFixed(1)}%` : 'the threshold';
 
   return (
-    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: '1.5rem' }}>
+    <div className="cf-grid">
       {counterfactuals.map((cf) => (
         <div key={cf.cf_index} style={{
           background: 'var(--surface2)', border: '1px solid var(--border)',

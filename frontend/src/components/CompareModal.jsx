@@ -37,21 +37,18 @@ export default function CompareModal({ current, previous, patientName, onClose }
       <div className="modal-box" onClick={e => e.stopPropagation()}>
 
         {/* Header */}
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+        <div className="modal-head">
           <div>
-            <h2 style={{ fontSize: '1.2rem', fontWeight: 800 }}>Visit Comparison — {patientName}</h2>
+            <h2 className="modal-title">Visit Comparison — {patientName}</h2>
             <p style={{ color: 'var(--text-muted)', fontSize: '0.83rem', marginTop: '0.2rem' }}>
               Previous Visit #{previous.visit_number} vs Current Visit #{current.visit_number}
             </p>
           </div>
-          <button onClick={onClose} style={{
-            background: 'none', border: '1px solid var(--border)', borderRadius: '8px',
-            color: 'var(--text-muted)', cursor: 'pointer', padding: '0.3rem 0.7rem', fontSize: '1rem',
-          }}>✕</button>
+          <button type="button" className="icon-btn" aria-label="Close" onClick={onClose}>✕</button>
         </div>
 
         {/* Risk summary row */}
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1.5rem' }}>
+        <div className="compare-risks">
           {[
             { label: 'Previous Risk', risk: prevRisk, visit: previous.visit_number },
             { label: 'Current Risk',  risk: currRisk,  visit: current.visit_number },

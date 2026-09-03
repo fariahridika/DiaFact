@@ -119,24 +119,19 @@ export default function PatientForm() {
   const bmiFlag = bmi !== null && (bmi < 12 || bmi > 60);
 
   return (
-    <div style={{ maxWidth: 720, margin: '0 auto' }}>
-      <div style={{ marginBottom: '1.5rem' }}>
-        <h1 style={{ fontSize: '1.6rem', fontWeight: 800, marginBottom: '0.3rem' }}>
-          T2D Risk Assessment
-        </h1>
-        <p style={{ color: 'var(--text-muted)' }}>
+    <div className="page">
+      <div className="page-intro">
+        <h1 className="page-title">T2D Risk Assessment</h1>
+        <p className="page-lead">
           Enter patient clinical data for a calibrated risk estimate, SHAP explanation,
           and SHAP-guided intervention targets.
         </p>
       </div>
 
-      <div style={{ display: 'flex', gap: '0.7rem', marginBottom: '1.5rem', flexWrap: 'wrap' }}>
-        <span style={{ color: 'var(--text-muted)', fontSize: '0.85rem', alignSelf: 'center' }}>
-          Demo presets:
-        </span>
+      <div className="preset-row">
+        <span className="preset-label">Demo presets:</span>
         {Object.keys(PRESETS).map(k => (
-          <button key={k} type="button" className="btn btn-outline"
-            style={{ padding: '0.4rem 0.9rem', fontSize: '0.85rem' }}
+          <button key={k} type="button" className="btn btn-outline preset-btn"
             onClick={() => applyPreset(k)}>
             {k === 'High Risk' ? '🔴' : '🟢'} {k} Patient
           </button>
@@ -242,8 +237,7 @@ export default function PatientForm() {
           </div>
         )}
 
-        <button type="submit" className="btn btn-primary" disabled={loading}
-          style={{ width: '100%', padding: '0.9rem', fontSize: '1rem' }}>
+        <button type="submit" className="btn btn-primary btn-block" disabled={loading}>
           {loading ? '⏳ Analysing…' : '🔍 Run T2D Assessment'}
         </button>
       </form>
