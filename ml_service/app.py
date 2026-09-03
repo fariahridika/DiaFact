@@ -37,6 +37,7 @@ import time
 import numpy as np
 import pandas as pd
 from flask import Flask, jsonify, request
+from werkzeug.exceptions import HTTPException
 from flask_cors import CORS
 
 import dice_ml
@@ -381,11 +382,22 @@ def _handle_too_large(_):
     return jsonify({"error": "request body too large"}), 413
 
 
+@app.errorhandler(HTTPException)
+def _handle_http(exc):
+    return jsonify({"error": exc.description or exc.name}), exc.code
+
+
 @app.errorhandler(Exception)
 def _handle_unexpected(exc):
     # Log the detail, return a generic message: internals are not the caller's.
     log.exception("unhandled error: %s", exc)
     return jsonify({"error": "internal error"}), 500
+
+
+@app.get("/")
+def root():
+    # Render probes "/" by default; the real check is /health.
+    return jsonify({"status": "ok", "health": "/health"})
 
 
 @app.get("/health")
