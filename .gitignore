@@ -1,0 +1,5 @@
+# Aiven / secrets — never commit
+ca.pem
+*.pem
+.env
+**/.env

@@ -1,0 +1,62 @@
+# DiaFact on Render — two web services (ML + API).
+# Dashboard: New → Blueprint → connect this repo, or create each service manually.
+# Docs: https://render.com/docs/blueprint-spec
+
+services:
+  - type: web
+    name: diafact-ml
+    runtime: python
+    rootDir: ml_service
+    plan: starter
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn -b 0.0.0.0:$PORT -w 1 --threads 2 -t 120 app:app
+    healthCheckPath: /health
+    envVars:
+      - key: PYTHON_VERSION
+        value: "3.11.9"
+      - key: CF_TIMEOUT_S
+        value: "45"
+      # Set after Vercel exists (exact URL, no trailing slash).
+      - key: ALLOWED_ORIGINS
+        sync: false
+
+  - type: web
+    name: diafact-api
+    runtime: node
+    rootDir: backend
+    plan: starter
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_VERSION
+        value: "20"
+      - key: NODE_ENV
+        value: production
+      - key: HOST
+        value: "0.0.0.0"
+      - key: DB_SSL
+        value: "true"
+      - key: DB_NAME
+        value: defaultdb
+      - key: ML_TIMEOUT_MS
+        value: "60000"
+      - key: RATE_LIMIT_PER_MIN
+        value: "60"
+      # Fill in the Render dashboard (or Blueprint sync: false prompts):
+      - key: DB_HOST
+        sync: false
+      - key: DB_PORT
+        sync: false
+      - key: DB_USER
+        sync: false
+      - key: DB_PASS
+        sync: false
+      - key: DB_SSL_CA
+        sync: false
+      - key: ML_URL
+        sync: false
+      - key: ALLOWED_ORIGINS
+        sync: false
+      - key: API_KEY
+        sync: false

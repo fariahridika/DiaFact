@@ -1,5 +1,11 @@
 __pycache__/
 *.pyc
-artifacts/
+# Keep serving artifacts tracked so Render can deploy the ML service.
+# Ignore only local scratch under artifacts/, not the published files.
+artifacts/*
+!artifacts/model.json
+!artifacts/calibration.json
+!artifacts/meta.json
+!artifacts/dice_background.csv
 data/
 models/
